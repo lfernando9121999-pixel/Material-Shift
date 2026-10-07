@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Material Shift · Dashboard</title>
+<style>
+:root{
+  --bg:#f3f5f8;--panel:#fff;--panel2:#f8fafc;--ink:#142033;--ink2:#33465e;--muted:#66768c;--line:#dde3ea;--grid:#e9eef4;
+  --head1:#0B2545;--head2:#134B7A;--accent:#173b57;--accentfg:#fff;--chip:#fbfcfe;
+  --okbg:#e7f5ec;--okfg:#1d7a3e;--okline:#bfe3cc;--badbg:#fdeceb;--badfg:#b3261e;--badline:#f4c7c3;
+  --warnbg:#fff6e5;--warnfg:#8a5300;--warnline:#f3d9a4;--plan:#7f7f7f;--scn:#2ca02c;--a:#1f77b4;--b:#ff7f0e;
+  --pos:#e8f6ed;--posfg:#146c2e;--neg:#fdeceb;--negfg:#a4261d;--shadow:0 1px 2px rgba(20,32,51,.05);
+}
+:root[data-theme="dark"]{
+  --bg:#0e1621;--panel:#16212e;--panel2:#1b2836;--ink:#e6edf5;--ink2:#c4d0de;--muted:#93a3b8;--line:#2a394b;--grid:#223142;
+  --head1:#081a30;--head2:#0f3a60;--accent:#3d7fb6;--accentfg:#fff;--chip:#1b2836;
+  --okbg:#123222;--okfg:#7ad7a0;--okline:#1f5236;--badbg:#3a1918;--badfg:#ff948a;--badline:#5e2a27;
+  --warnbg:#3a2c10;--warnfg:#f3c46b;--warnline:#5a4417;--plan:#9aa4b1;--scn:#3fbf55;--a:#4da3e8;--b:#ff9a3d;
+  --pos:#14301f;--posfg:#7ad7a0;--neg:#3a1918;--negfg:#ff948a;--shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font:13px/1.4 "Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);overflow:hidden;display:flex;flex-direction:column}
+button,select,input{font:inherit;color:inherit}
+header{display:flex;align-items:center;gap:12px;padding:10px 18px;background:linear-gradient(90deg,var(--head1),var(--head2));color:#fff;flex:0 0 auto;min-height:52px}
+header img{width:30px;height:30px;border-radius:7px}
+header .brand{font-size:17px;font-weight:700;letter-spacing:.01em;white-space:nowrap}
+header .ver{font-size:11.5px;opacity:.7;font-weight:600;margin-left:2px}
+header .meta{margin-left:auto;display:flex;align-items:center;gap:8px;min-width:0}
+.hchip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:3px 11px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:360px}
+.hchip b{font-weight:700}
+.toolbar{display:flex;align-items:center;gap:8px;padding:10px 16px 0;flex-wrap:wrap;flex:0 0 auto}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 14px;border-radius:8px;cursor:pointer;font-weight:600}
+.tabs button:hover{border-color:var(--muted)}
+.tabs button.on{background:var(--accent);border-color:var(--accent);color:var(--accentfg)}
+.circ{margin-left:auto;display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--panel)}
+.circ button{border:0;background:none;padding:7px 14px;cursor:pointer;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:7px}
+.circ button+button{border-left:1px solid var(--line)}
+.circ button.on{background:var(--panel2);color:var(--ink)}
+.circ button:disabled{opacity:.4;cursor:default}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.dot.Desmonte{background:#475569}.dot.Mineral{background:#c47a2c}
+.banner{margin:10px 16px 0;padding:8px 12px;border-radius:8px;background:var(--warnbg);color:var(--warnfg);border:1px solid var(--warnline);display:flex;gap:8px;align-items:center;font-size:12.5px}
+main{flex:1;overflow:auto;padding:10px 16px 18px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:12px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow);min-width:0}
+.kpi{padding:9px 13px}
+.kpi .top{display:flex;justify-content:space-between;gap:6px;color:var(--muted);font-size:12px}
+.kpi strong{display:block;font-size:17px;margin-top:2px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi.ok{background:var(--okbg);border-color:var(--okline)}.kpi.ok strong{color:var(--okfg)}
+.kpi.bad{background:var(--badbg);border-color:var(--badline)}.kpi.bad strong{color:var(--badfg)}
+.help{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1px solid var(--muted);color:var(--muted);font-size:10.5px;font-weight:700;cursor:help;flex:0 0 auto}
+h2{font-size:14.5px;margin:0;font-weight:700}
+.phead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.phead .sp{flex:1}
+.sub{color:var(--muted);font-size:12px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{border:0;background:var(--panel);padding:4px 11px;cursor:pointer;font-size:12px;font-weight:600;color:var(--muted)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--accent);color:var(--accentfg)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.chips label{border:1px solid var(--line);padding:3px 9px 3px 6px;border-radius:7px;font-size:12px;background:var(--chip);cursor:pointer;display:flex;align-items:center;gap:5px;user-select:none}
+.chips label .sw{width:10px;height:10px;border-radius:2px}
+.chips input{margin:0;accent-color:var(--accent)}
+.grid-mat{display:grid;grid-template-columns:minmax(0,1fr) 170px;gap:12px}
+.grid-cons{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,32%);gap:12px}
+.minis{display:grid;gap:8px;align-content:start}
+.mini{border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:var(--panel2)}
+.mini span{display:block;color:var(--muted);font-size:11px}
+.mini strong{font-size:14px;font-variant-numeric:tabular-nums}
+.stack{display:grid;gap:12px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.chart{position:relative;width:100%;min-width:0}
+.chart svg{display:block;overflow:visible}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12px;box-shadow:0 6px 20px rgba(0,0,0,.14);z-index:5;white-space:nowrap;display:none}
+.tip .th{font-weight:700;margin-bottom:3px}
+.tip .tr{display:flex;align-items:center;gap:6px;justify-content:space-between}
+.tip .tr span:first-child{display:flex;align-items:center;gap:6px;color:var(--ink2)}
+.tip .tr b{font-variant-numeric:tabular-nums;margin-left:14px}
+.tip i{display:inline-block;width:12px;height:3px;border-radius:2px}
+.tscroll{overflow:auto;border:1px solid var(--line);border-radius:8px;max-height:calc(100vh - 210px)}
+table.dt{width:100%;border-collapse:collapse;font-size:12px}
+.dt th,.dt td{border-bottom:1px solid var(--grid);padding:5px 8px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.dt th{background:var(--panel2);color:var(--ink2);position:sticky;top:0;z-index:1;font-weight:600}
+.dt thead tr:nth-child(2) th{top:27px}
+.dt th.l,.dt td.l{text-align:left}
+.dt th.c{text-align:center}
+.dt td.pos{background:var(--pos);color:var(--posfg);font-weight:600}
+.dt td.neg{background:var(--neg);color:var(--negfg);font-weight:600}
+.dt td.same{color:var(--muted)}
+.dt tr.tot td{font-weight:700;background:var(--panel2)}
+.dt td.ok{color:var(--okfg);font-weight:600}.dt td.bad{color:var(--badfg);font-weight:600}
+.note{color:var(--muted);font-size:12px;margin-top:6px}
+.cmpbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.cmpbar .pick{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:6px 10px;background:var(--panel)}
+.cmpbar .tag{font-weight:800;font-size:11px;border-radius:5px;padding:2px 7px;color:#fff}
+.tag.A{background:var(--a)}.tag.B{background:var(--b)}
+.dt th .tag{display:inline-block;font-size:10px;line-height:14px;padding:0 5px;margin-right:4px;vertical-align:1px}
+.dt td.dif{font-weight:700;color:var(--ink)}
+.cmpbar select{border:1px solid var(--line);border-radius:7px;background:var(--panel2);padding:5px 8px;min-width:220px;max-width:340px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:600}
+.btn:hover{border-color:var(--muted)}
+.empty{height:100%;display:flex;align-items:center;justify-content:center}
+.empty .card{max-width:620px;text-align:center;padding:28px}
+.empty img{width:96px;height:96px;border-radius:22px;box-shadow:0 10px 30px rgba(11,37,69,.25)}
+.empty h1{font-size:24px;margin:14px 0 4px}
+.empty p{color:var(--muted);margin:4px 0}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0 14px;text-align:left}
+.steps div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--panel)}
+.steps b{display:block;margin-bottom:2px}
+.keys{color:var(--muted);font-size:12px}
+kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;font:11px Consolas,monospace;background:var(--panel)}
+.recent{margin-top:16px;text-align:left}
+.recent .it{display:flex;justify-content:space-between;gap:10px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;margin-top:6px;cursor:pointer;background:var(--panel)}
+.recent .it:hover{border-color:var(--muted)}
+.cm{position:fixed;z-index:50;background:var(--panel);border:1px solid var(--line);border-radius:9px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:5px;min-width:250px;display:none}
+.cm div{padding:7px 11px;border-radius:6px;cursor:pointer;display:flex;justify-content:space-between;gap:16px}
+.cm div:hover{background:var(--panel2)}
+.cm hr{border:0;border-top:1px solid var(--line);margin:4px 2px}
+.cm small{color:var(--muted)}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#1f2d3d;color:#fff;padding:8px 14px;border-radius:8px;font-size:12.5px;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+@media (max-width:1100px){.grid-cons{grid-template-columns:1fr}.two{grid-template-columns:1fr}.grid-mat{grid-template-columns:1fr}.minis{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<!--MS_EMBED-->
+<header>
+  <img id="logo" alt="" src="">
+  <div class="brand">Material Shift <span class="ver" id="ver">v2.0</span></div>
+  <div class="meta" id="hmeta"></div>
+</header>
+<div id="toolbar"></div>
+<div id="banner"></div>
+<main id="main"></main>
+<div class="cm" id="cm"></div>
+<div class="toast" id="toast"></div>
+<script>
+'use strict';
+// ------------------------------------------------------------------ host bridge
+const HOST = window.chrome && window.chrome.webview ? window.chrome.webview : null;
+const post = m => { if (HOST) HOST.postMessage(JSON.stringify(m)); };
+const EMBED = window.MS_EMBED || null;
+const LOGO = 'data:image/png;base64,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';
+document.getElementById('logo').src = LOGO;
+
+// ------------------------------------------------------------------ state
+const S = {
+  runs: {}, runList: [], current: null, circuit: 'Desmonte', view: 'dashboard',
+  per: {mat: 'semanal', cons: 'semanal', tabla: 'semanal', cmp: 'semanal'},
+  mode: 'individual', cmpMode: 'total', vis: {}, consVis: {}, A: null, B: null,
+  stale: null, version: 'v2.0', recent: []
+};
+const PALETTE = {Chw2a_1:'#1f77b4',Chw2a_2:'#ff7f0e',DiqueN_1:'#2ca02c',E10_1:'#9467bd',E9_3:'#8c564b',E9_4:'#d62728',E9_5:'#17becf',N2_1:'#bcbd22',N2_2:'#e377c2',N2_3:'#7f7f7f'};
+const CYCLE = ['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b','#e377c2','#7f7f7f','#bcbd22','#17becf'];
+function colorOf(dest, list) {
+  if (PALETTE[dest]) return PALETTE[dest];
+  const i = Math.max(0, (list || []).indexOf(dest));
+  return CYCLE[i % CYCLE.length];
+}
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = v => { const r = Math.round(Number(v || 0)); return (r === 0 ? 0 : r).toLocaleString('en-US'); };   // never "-0"
+const fmt2 = v => v == null || v === '' ? '—' : Number(v).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 3});
+const sgn = v => (v > 0.5 ? '+' : '') + fmt(v);
+const dmy = iso => { const p = String(iso).split('-'); return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : iso; };
+const dm = iso => { const p = String(iso).split('-'); return p.length === 3 ? p[2] + '/' + p[1] : iso; };
+const MODE = {objetivo_fijo: 'Objetivo fijo', balanceado: 'Balanceado', objetivo_solicitado: 'Objetivo fijo'};
+const GRAN = {semanal: 'Semanal', diario: 'Diario'};
+
+function curRun() { return S.runs[S.current] || null; }
+function payloadOf(run, circ) { return run && run.circuitos ? run.circuitos[circ] || null : null; }
+function scnName(run) { return run ? (run.escenario || 'Sin título') : ''; }
+
+// ------------------------------------------------------------------ messages
+if (HOST) HOST.addEventListener('message', e => {
+  let m; try { m = JSON.parse(e.data); } catch (_) { return; }
+  if (m.type === 'init') { S.version = m.version || S.version; S.recent = m.recent || []; setTheme(m.dark); document.getElementById('ver').textContent = S.version; render(); }
+  else if (m.type === 'results') { m.run.id = m.id || m.run.id; m.run.origen = 'sesion'; addRun(m.run, true); }
+  else if (m.type === 'run') { m.run.id = m.id || m.run.id; m.run.origen = m.origen || 'archivo'; addRun(m.run, false); }
+  else if (m.type === 'exportPpt') { const specs = Array.from(document.querySelectorAll('.chart[data-chart]')).map(c => pptSpec(c._spec)); if (specs.length) post({type: 'pptChart', save: true, spec: {charts: specs}, name: 'Material Shift - ' + S.circuit + ' - ' + S.view}); else toast('No hay gráficos en esta vista.'); }
+  else if (m.type === 'runList') { S.runList = m.list || []; if (S.view === 'comparar' || !S.current) render(); }
+  else if (m.type === 'circuit') { if (m.circuit && m.circuit !== S.circuit) { S.circuit = m.circuit; render(); } }
+  else if (m.type === 'theme') { setTheme(m.dark); render(); }
+  else if (m.type === 'stale') { S.stale = m.text || null; renderBanner(); }
+  else if (m.type === 'view') { S.view = m.view; render(); }
+  else if (m.type === 'toast') { toast(m.text); }
+  else if (m.type === 'recent') { S.recent = m.list || []; if (!S.current) render(); }
+});
+
+function setTheme(dark) { document.documentElement.dataset.theme = dark ? 'dark' : 'light'; }
+
+function addRun(run, makeCurrent) {
+  if (!run) return;
+  run.id = run.id || ('run' + Date.now());
+  const prev = S.current;
+  S.runs[run.id] = run;
+  if (makeCurrent) {
+    S.current = run.id;
+    S.stale = null;
+    const circs = Object.keys(run.circuitos || {});
+    if (!circs.includes(S.circuit)) S.circuit = circs[0] || 'Desmonte';
+    // Compare defaults: the newest run is B, the previously shown one is A.
+    S.B = run.id;
+    // A keeps the user's choice unless it IS this run, or points to the results file this
+    // run just overwrote (same path): then A becomes the previous run of the session.
+    const pathOf = id => String(id || '').replace(/^(s\d+|f)\|/, '').toLowerCase();
+    const stale = S.A && String(S.A).startsWith('f|') && pathOf(S.A) === pathOf(run.id);
+    if (stale) delete S.runs[S.A];
+    if (!S.A || S.A === run.id || stale) S.A = prev && prev !== run.id ? prev : (S.runList.find(r => r.id !== run.id && pathOf(r.id) !== pathOf(run.id)) || {}).id || null;
+  }
+  render();
+}
+
+// ------------------------------------------------------------------ chart library (SVG, no dependencies)
+const CHARTS = new Set();
+const RO = new ResizeObserver(entries => {
+  for (const en of entries) {
+    const el = en.target;
+    const w = Math.round(en.contentRect.width);
+    if (el._w !== w && el._draw) { el._w = w; el._draw(); }
+  }
+});
+function mountChart(el, spec) {
+  el._spec = spec;
+  el.dataset.chart = '1';
+  el._draw = () => (spec.kind === 'line' ? drawLine : drawBar)(el, spec);
+  el._w = el.clientWidth;
+  el._draw();
+  RO.observe(el);
+}
+function niceTicks(min, max, count) {
+  if (!(max > min)) { max = min + 1; }
+  const span = max - min;
+  let step = Math.pow(10, Math.floor(Math.log10(span / count)));
+  const err = count / span * step;
+  if (err <= 0.15) step *= 10; else if (err <= 0.35) step *= 5; else if (err <= 0.75) step *= 2;
+  const lo = Math.floor(min / step) * step, hi = Math.ceil(max / step) * step;
+  const ticks = [];
+  for (let v = lo; v <= hi + step / 2; v += step) ticks.push(Math.round(v / step) * step);
+  return ticks;
+}
+function monotonePath(pts) {
+  const n = pts.length;
+  if (n === 0) return '';
+  if (n < 3) return 'M' + pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join('L');
+  const dx = [], dy = [], m = [], t = [];
+  for (let i = 0; i < n - 1; i++) { dx.push(pts[i + 1][0] - pts[i][0]); dy.push(pts[i + 1][1] - pts[i][1]); m.push(dy[i] / dx[i]); }
+  t.push(m[0]);
+  for (let i = 1; i < n - 1; i++) t.push(m[i - 1] * m[i] <= 0 ? 0 : (m[i - 1] + m[i]) / 2);
+  t.push(m[n - 2]);
+  for (let i = 0; i < n - 1; i++) {
+    if (m[i] === 0) { t[i] = 0; t[i + 1] = 0; continue; }
+    const a = t[i] / m[i], b = t[i + 1] / m[i], h = a * a + b * b;
+    if (h > 9) { const k = 3 / Math.sqrt(h); t[i] = k * a * m[i]; t[i + 1] = k * b * m[i]; }
+  }
+  let d = 'M' + pts[0][0].toFixed(1) + ',' + pts[0][1].toFixed(1);
+  for (let i = 0; i < n - 1; i++) {
+    const h = dx[i] / 3;
+    d += 'C' + (pts[i][0] + h).toFixed(1) + ',' + (pts[i][1] + h * t[i]).toFixed(1) + ' ' + (pts[i + 1][0] - h).toFixed(1) + ',' + (pts[i + 1][1] - h * t[i + 1]).toFixed(1) + ' ' + pts[i + 1][0].toFixed(1) + ',' + pts[i + 1][1].toFixed(1);
+  }
+  return d;
+}
+let _mctx = null;
+function textW(s, size) { if (!_mctx) _mctx = document.createElement('canvas').getContext('2d'); _mctx.font = (size || 12) + 'px "Segoe UI"'; return _mctx.measureText(String(s)).width; }
+const NS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+
+function legendLayout(items, width) {
+  // items: [{name,color,dash,box}] -> rows of {x,item}
+  const rows = [[]]; let x = 0;
+  const gap = 18;
+  items.forEach(it => {
+    const w = 22 + textW(it.name, 12) + gap;
+    if (x + w > width - 10 && rows[rows.length - 1].length) { rows.push([]); x = 0; }
+    rows[rows.length - 1].push({x: x, w: w, it: it}); x += w;
+  });
+  return rows;
+}
+function drawLegend(svg, items, width, top, colors) {
+  const rows = legendLayout(items, width);
+  rows.forEach((row, r) => {
+    const total = row.reduce((s, c) => s + c.w, 0) - 18;
+    let x0 = Math.max(0, (width - total) / 2);
+    row.forEach(c => {
+      const y = top + r * 20 + 10;
+      if (c.it.box) svgEl('rect', {x: x0 + c.x, y: y - 5, width: 12, height: 10, rx: 2, fill: c.it.color}, svg);
+      else svgEl('line', {x1: x0 + c.x, x2: x0 + c.x + 16, y1: y, y2: y, stroke: c.it.color, 'stroke-width': 2.5, 'stroke-linecap': 'round', 'stroke-dasharray': c.it.dash ? '5 3' : ''}, svg);
+      const t = svgEl('text', {x: x0 + c.x + 22, y: y + 4, 'font-size': 12, fill: colors.ink2, 'font-family': 'Segoe UI'}, svg);
+      t.textContent = c.it.name;
+    });
+  });
+  return rows.length * 20 + 6;
+}
+function chartColors() { return {ink: cssv('--ink'), ink2: cssv('--ink2'), muted: cssv('--muted'), grid: cssv('--grid'), line: cssv('--line'), panel: cssv('--panel')}; }
+
+function drawLine(el, spec) {
+  el.innerHTML = '';
+  const W = Math.max(260, el.clientWidth), H = spec.height || 290;
+  const C = chartColors();
+  const series = spec.series.filter(s => s.values && s.values.length);
+  const legendItems = series.filter(s => !s.noLegend).map(s => ({name: s.name, color: s.color, dash: s.dash}));
+  const legH = legendItems.length ? legendLayout(legendItems, W).length * 20 + 8 : 0;
+  let vmin = Infinity, vmax = -Infinity;
+  series.forEach(s => s.values.forEach(v => { if (v != null && isFinite(v)) { vmin = Math.min(vmin, v); vmax = Math.max(vmax, v); } }));
+  (spec.refs || []).forEach(r => { vmin = Math.min(vmin, r.y); vmax = Math.max(vmax, r.y); });
+  if (!isFinite(vmin)) { vmin = 0; vmax = 1; }
+  const ticks = niceTicks(Math.min(0, vmin), vmax * 1.02, 5);
+  const y0 = ticks[0], y1 = ticks[ticks.length - 1];
+  const yLab = ticks.map(t => (spec.yFmt || fmt)(t));
+  const left = Math.max(...yLab.map(s => textW(s, 11.5))) + 14, right = 18, top = 10, bottom = 26 + legH;
+  const pw = W - left - right, ph = H - top - bottom;
+  const labels = spec.labels;
+  const n = labels.length;
+  const X = i => left + (n <= 1 ? pw / 2 : i * pw / (n - 1));
+  const Y = v => top + ph - (v - y0) / (y1 - y0) * ph;
+  const svg = svgEl('svg', {width: W, height: H, viewBox: `0 0 ${W} ${H}`, xmlns: NS, 'font-family': 'Segoe UI'});
+  ticks.forEach((t, i) => {
+    svgEl('line', {x1: left, x2: left + pw, y1: Y(t), y2: Y(t), stroke: C.grid, 'stroke-width': 1}, svg);
+    const tx = svgEl('text', {x: left - 7, y: Y(t) + 4, 'text-anchor': 'end', 'font-size': 11.5, fill: C.muted}, svg); tx.textContent = yLab[i];
+  });
+  svgEl('line', {x1: left, x2: left + pw, y1: top + ph, y2: top + ph, stroke: C.line, 'stroke-width': 1}, svg);
+  const every = spec.xEvery || Math.max(1, Math.ceil(n / Math.max(4, Math.floor(pw / 56))));
+  for (let i = 0; i < n; i += every) {
+    svgEl('line', {x1: X(i), x2: X(i), y1: top + ph, y2: top + ph + 4, stroke: C.line}, svg);
+    const tx = svgEl('text', {x: X(i), y: top + ph + 17, 'text-anchor': 'middle', 'font-size': 11.5, fill: C.muted}, svg);
+    tx.textContent = spec.xFmt ? spec.xFmt(labels[i]) : labels[i];
+  }
+  (spec.refs || []).forEach(r => {
+    svgEl('line', {x1: left, x2: left + pw, y1: Y(r.y), y2: Y(r.y), stroke: r.color, 'stroke-width': 1.2, 'stroke-dasharray': r.dash || '4 3', 'stroke-opacity': r.opacity == null ? 0.65 : r.opacity}, svg);
+  });
+  series.forEach(s => {
+    const pts = [];
+    s.values.forEach((v, i) => { if (v != null && isFinite(v)) pts.push([X(i), Y(v)]); });
+    svgEl('path', {d: n > 120 ? 'M' + pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join('L') : monotonePath(pts), fill: 'none', stroke: s.color, 'stroke-width': s.width || 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', 'stroke-dasharray': s.dash ? '6 4' : ''}, svg);
+  });
+  if (legendItems.length) drawLegend(svg, legendItems, W, H - legH + 2, C);
+  const guide = svgEl('line', {x1: 0, x2: 0, y1: top, y2: top + ph, stroke: C.muted, 'stroke-width': 1, 'stroke-dasharray': '3 3', visibility: 'hidden'}, svg);
+  const dots = series.map(s => svgEl('circle', {r: 4, fill: s.color, stroke: C.panel, 'stroke-width': 2, visibility: 'hidden'}, svg));
+  const hit = svgEl('rect', {x: left, y: top, width: pw, height: ph, fill: 'transparent'}, svg);
+  el.appendChild(svg);
+  const tip = document.createElement('div'); tip.className = 'tip'; el.appendChild(tip);
+  const hide = () => { tip.style.display = 'none'; guide.setAttribute('visibility', 'hidden'); dots.forEach(d => d.setAttribute('visibility', 'hidden')); };
+  hit.addEventListener('mouseleave', hide);
+  hit.addEventListener('mousemove', ev => {
+    const r = svg.getBoundingClientRect();
+    const mx = ev.clientX - r.left;
+    const i = Math.max(0, Math.min(n - 1, Math.round((mx - left) / (pw / Math.max(1, n - 1)))));
+    guide.setAttribute('x1', X(i)); guide.setAttribute('x2', X(i)); guide.setAttribute('visibility', 'visible');
+    let rows = '';
+    series.forEach((s, k) => {
+      const v = s.values[i];
+      if (v == null) { dots[k].setAttribute('visibility', 'hidden'); return; }
+      dots[k].setAttribute('cx', X(i)); dots[k].setAttribute('cy', Y(v)); dots[k].setAttribute('visibility', 'visible');
+      rows += `<div class="tr"><span><i style="background:${s.color}"></i>${esc(s.name)}</span><b>${(spec.yFmt || fmt)(v)}</b></div>`;
+    });
+    tip.innerHTML = `<div class="th">${esc(spec.tipLabel ? spec.tipLabel(labels[i]) : labels[i])}</div>` + rows;
+    tip.style.display = 'block';
+    const tw = tip.offsetWidth;
+    let tx = X(i) + 14; if (tx + tw > W - 4) tx = X(i) - tw - 14;
+    tip.style.left = Math.max(0, tx) + 'px'; tip.style.top = (top + 6) + 'px';
+  });
+}
+
+function drawBar(el, spec) {
+  el.innerHTML = '';
+  const W = Math.max(220, el.clientWidth);
+  const C = chartColors();
+  const cats = spec.categories, series = spec.series, horiz = !!spec.horizontal;
+  const legendItems = series.map(s => ({name: s.name, color: s.color, box: true}));
+  const legH = legendLayout(legendItems, W).length * 20 + 8;
+  const H = spec.height || (horiz ? Math.max(200, cats.length * (series.length * 11 + 14) + 50 + legH) : 290);
+  let vmin = 0, vmax = 0;
+  series.forEach(s => s.values.forEach(v => { vmin = Math.min(vmin, v || 0); vmax = Math.max(vmax, v || 0); }));
+  const ticks = niceTicks(vmin, vmax * 1.04 || 1, horiz ? 4 : 5);
+  const t0 = ticks[0], t1 = ticks[ticks.length - 1];
+  const tl = ticks.map(t => fmt(t));
+  const svg = svgEl('svg', {width: W, height: H, viewBox: `0 0 ${W} ${H}`, xmlns: NS, 'font-family': 'Segoe UI'});
+  let left, right = 18, top = 10, bottom;
+  if (horiz) {
+    left = Math.max(...cats.map(c => textW(c, 11.5))) + 14; bottom = 26 + legH;
+  } else {
+    left = Math.max(...tl.map(s => textW(s, 11.5))) + 14; bottom = 30 + legH;
+  }
+  const pw = W - left - right, ph = H - top - bottom;
+  const V = v => horiz ? left + (v - t0) / (t1 - t0) * pw : top + ph - (v - t0) / (t1 - t0) * ph;
+  ticks.forEach((t, i) => {
+    if (horiz) {
+      svgEl('line', {x1: V(t), x2: V(t), y1: top, y2: top + ph, stroke: C.grid}, svg);
+      const tx = svgEl('text', {x: V(t), y: top + ph + 16, 'text-anchor': 'middle', 'font-size': 11, fill: C.muted}, svg); tx.textContent = tl[i];
+    } else {
+      svgEl('line', {x1: left, x2: left + pw, y1: V(t), y2: V(t), stroke: C.grid}, svg);
+      const tx = svgEl('text', {x: left - 7, y: V(t) + 4, 'text-anchor': 'end', 'font-size': 11.5, fill: C.muted}, svg); tx.textContent = tl[i];
+    }
+  });
+  const band = (horiz ? ph : pw) / Math.max(1, cats.length);
+  const inner = band * 0.78, bw = Math.max(2, (inner - 2 * (series.length - 1)) / series.length);
+  const rects = [];
+  cats.forEach((c, ci) => {
+    const b0 = (horiz ? top : left) + ci * band + (band - inner) / 2;
+    series.forEach((s, si) => {
+      const v = s.values[ci] || 0;
+      const p = b0 + si * (bw + 2);
+      const a = V(0), z = V(v);
+      const r = Math.min(4, bw / 2);
+      let d;
+      if (horiz) {
+        const x0 = Math.min(a, z), x1 = Math.max(a, z), w = x1 - x0;
+        d = v >= 0 ? `M${x0},${p}H${x1 - r}Q${x1},${p} ${x1},${p + r}V${p + bw - r}Q${x1},${p + bw} ${x1 - r},${p + bw}H${x0}Z` : `M${x1},${p}H${x0 + r}Q${x0},${p} ${x0},${p + r}V${p + bw - r}Q${x0},${p + bw} ${x0 + r},${p + bw}H${x1}Z`;
+        if (w < 0.5) d = `M${x0},${p}h0.5v${bw}h-0.5Z`;
+      } else {
+        const y0 = Math.min(a, z), y1 = Math.max(a, z);
+        d = v >= 0 ? `M${p},${y1}V${y0 + r}Q${p},${y0} ${p + r},${y0}H${p + bw - r}Q${p + bw},${y0} ${p + bw},${y0 + r}V${y1}Z` : `M${p},${y0}V${y1 - r}Q${p},${y1} ${p + r},${y1}H${p + bw - r}Q${p + bw},${y1} ${p + bw},${y1 - r}V${y0}Z`;
+        if (y1 - y0 < 0.5) d = `M${p},${y0}h${bw}v0.5h-${bw}Z`;
+      }
+      rects.push(svgEl('path', {d: d, fill: s.color}, svg));
+    });
+    if (horiz) {
+      const tx = svgEl('text', {x: left - 7, y: top + ci * band + band / 2 + 4, 'text-anchor': 'end', 'font-size': 11.5, fill: C.ink2}, svg); tx.textContent = c;
+    } else if (!spec.hideCats) {
+      const tx = svgEl('text', {x: left + ci * band + band / 2, y: top + ph + 17, 'text-anchor': 'middle', 'font-size': 11.5, fill: C.ink2}, svg); tx.textContent = c;
+    }
+  });
+  if (horiz) svgEl('line', {x1: V(0), x2: V(0), y1: top, y2: top + ph, stroke: C.line}, svg);
+  else svgEl('line', {x1: left, x2: left + pw, y1: V(0), y2: V(0), stroke: C.line}, svg);
+  drawLegend(svg, legendItems, W, H - legH + 2, C);
+  const hover = svgEl('rect', {fill: C.muted, 'fill-opacity': 0.08, visibility: 'hidden'}, svg);
+  svg.insertBefore(hover, svg.firstChild);
+  const hit = svgEl('rect', {x: left, y: top, width: pw, height: ph, fill: 'transparent'}, svg);
+  el.appendChild(svg);
+  const tip = document.createElement('div'); tip.className = 'tip'; el.appendChild(tip);
+  hit.addEventListener('mouseleave', () => { tip.style.display = 'none'; hover.setAttribute('visibility', 'hidden'); });
+  hit.addEventListener('mousemove', ev => {
+    const r = svg.getBoundingClientRect();
+    const pos = horiz ? ev.clientY - r.top - top : ev.clientX - r.left - left;
+    const ci = Math.max(0, Math.min(cats.length - 1, Math.floor(pos / band)));
+    if (horiz) { hover.setAttribute('x', left); hover.setAttribute('width', pw); hover.setAttribute('y', top + ci * band); hover.setAttribute('height', band); }
+    else { hover.setAttribute('y', top); hover.setAttribute('height', ph); hover.setAttribute('x', left + ci * band); hover.setAttribute('width', band); }
+    hover.setAttribute('visibility', 'visible');
+    tip.innerHTML = `<div class="th">${esc(cats[ci])}</div>` + series.map(s => `<div class="tr"><span><i style="background:${s.color};height:9px;width:9px"></i>${esc(s.name)}</span><b>${fmt(s.values[ci])}</b></div>`).join('');
+    tip.style.display = 'block';
+    const tw = tip.offsetWidth;
+    let tx = ev.clientX - r.left + 14; if (tx + tw > W - 4) tx = ev.clientX - r.left - tw - 14;
+    tip.style.left = Math.max(0, tx) + 'px'; tip.style.top = Math.max(0, ev.clientY - r.top - 20) + 'px';
+  });
+}
+
+// ------------------------------------------------------------------ data helpers
+function periodRows(p, per, base) {
+  if (per === 'diario') return base ? p.baseMaterialDayDest : p.materialDayDest;
+  return base ? p.baseMaterialWeekDest : p.materialWeekDest;
+}
+function hasDaily(p) { return p && p.materialDayDest && p.materialDayDest.length > 0; }
+function perField(per) { return per === 'diario' ? 'Dia' : 'Semana'; }
+function sumSel(row, sel) { let s = 0; for (const d of sel) s += row[d] || 0; return s; }
+function xOpts(per) {
+  return per === 'diario'
+    ? {xFmt: dm, tipLabel: d => dmy(d), xEvery: 30}
+    : {xFmt: w => w, tipLabel: w => 'Semana ' + w, xEvery: 4};
+}
+function visFor(store, p) {
+  const key = S.current + '|' + p.circuit;
+  if (!store[key]) store[key] = new Set(p.chancadoras || []);
+  return store[key];
+}
+
+// ------------------------------------------------------------------ render
+function render() {
+  renderHeader(); renderToolbar(); renderBanner(); renderMain();
+}
+function renderHeader() {
+  const run = curRun();
+  const el = document.getElementById('hmeta');
+  if (!run) { el.innerHTML = ''; return; }
+  const p = payloadOf(run, S.circuit);
+  const st = p && p.settings ? p.settings : null;
+  const crit = st ? `${MODE[st.modo] || st.modo} · ${GRAN[st.granularidad] || st.granularidad} · ${fmt2(st.objetivo_mt)} Mt/sem ± ${fmt2(st.tolerancia_mt)}` : '';
+  el.innerHTML = (crit ? `<span class="hchip" title="Criterio del circuito ${esc(S.circuit)}">${esc(crit)}</span>` : '') +
+    `<span class="hchip" title="${esc(run.archivo_base || '')}">Escenario: <b>${esc(scnName(run))}</b></span>` +
+    `<span class="hchip">${esc(run.fecha || '')}</span>`;
+}
+function renderToolbar() {
+  const el = document.getElementById('toolbar');
+  const run = curRun();
+  if (!run && !EMBED) { el.innerHTML = ''; el.className = ''; return; }
+  el.className = 'toolbar';
+  const views = [['dashboard', 'Dashboard'], ['tabla', 'Tabla'], ['materiales', 'Materiales']];
+  if (!EMBED) views.push(['comparar', 'Comparar Escenarios']);
+  const circs = ['Desmonte', 'Mineral'];
+  const have = run ? Object.keys(run.circuitos || {}) : [];
+  el.innerHTML = '<div class="tabs">' + views.map(v => `<button data-view="${v[0]}" class="${S.view === v[0] ? 'on' : ''}">${v[1]}</button>`).join('') + '</div>' +
+    '<div class="circ" title="Circuito (Ctrl+Tab cambia de circuito)">' + circs.map(c => `<button data-circ="${c}" class="${S.circuit === c ? 'on' : ''}" ${S.view !== 'comparar' && !have.includes(c) ? 'disabled title="Este escenario no tiene circuito ' + c + '"' : ''}><span class="dot ${c}"></span>${c}</button>`).join('') + '</div>';
+}
+function renderBanner() {
+  const el = document.getElementById('banner');
+  el.innerHTML = S.stale && curRun() ? `<div class="banner"><b>⚠</b><span>${esc(S.stale)}</span></div>` : '';
+}
+document.getElementById('toolbar').addEventListener('click', e => {
+  const v = e.target.closest('[data-view]'), c = e.target.closest('[data-circ]');
+  if (v) { S.view = v.dataset.view; post({type: 'dashView', view: S.view}); render(); }
+  else if (c && !c.disabled) { S.circuit = c.dataset.circ; post({type: 'circuit', circuit: S.circuit}); render(); }
+});
+
+function renderMain() {
+  const main = document.getElementById('main');
+  CHARTS.clear();
+  const keep = main.scrollTop;
+  const run = curRun();
+  if (!run) { main.innerHTML = emptyHtml(); return; }
+  if (S.view === 'comparar') { renderCompare(main); main.scrollTop = keep; return; }
+  const p = payloadOf(run, S.circuit);
+  if (!p) { main.innerHTML = `<div class="panel">El escenario <b>${esc(scnName(run))}</b> no tiene circuito ${esc(S.circuit)} configurado.</div>`; return; }
+  if (S.view === 'tabla') renderTabla(main, run, p);
+  else if (S.view === 'materiales') renderMateriales(main, run, p);
+  else renderDashboard(main, run, p);
+  main.scrollTop = keep;
+}
+
+function emptyHtml() {
+  const rec = (S.recent || []).slice(0, 5);
+  return `<div class="empty"><div class="card">
+    <img src="${LOGO}" alt="">
+    <h1>Material Shift</h1>
+    <p>Reasigna tonelaje semanal entre chancadoras y destinos donantes, por circuito (Desmonte y Mineral).</p>
+    <div class="steps">
+      <div><b>1 · Inputs</b><span class="sub">Elige el Excel base y la hoja. Las columnas se detectan solas.</span></div>
+      <div><b>2 · Criterios</b><span class="sub">Objetivos, Prioridad y Material por circuito.</span></div>
+      <div><b>3 · Calcular</b><span class="sub">Presiona <kbd>F5</kbd>. El resultado aparece aquí.</span></div>
+    </div>
+    <div class="keys"><kbd>Ctrl</kbd>+<kbd>O</kbd> Abrir escenario · <kbd>Ctrl</kbd>+<kbd>S</kbd> Guardar · <kbd>F5</kbd> Calcular · <kbd>Ctrl</kbd>+<kbd>E</kbd> Excel · <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd> Modo noche</div>
+    ${rec.length ? '<div class="recent"><div class="sub">Escenarios recientes</div>' + rec.map(r => `<div class="it" data-recent="${esc(r.path)}"><b>${esc(r.name)}</b><span class="sub">${esc(r.folder || '')}</span></div>`).join('') + '</div>' : ''}
+  </div></div>`;
+}
+document.getElementById('main').addEventListener('click', e => {
+  const r = e.target.closest('[data-recent]');
+  if (r) post({type: 'openRecent', path: r.dataset.recent});
+});
+
+function kpiHtml(label, value, help, cls) {
+  return `<div class="panel kpi ${cls || ''}"><div class="top"><span>${label}</span><span class="help" title="${esc(help)}">?</span></div><strong>${value}</strong></div>`;
+}
+function statusKpi(label, ok, n, help) {
+  return kpiHtml(label, ok ? '✓ Ok' : '! Revisar' + (n != null ? ' (' + fmt(n) + ')' : ''), help, ok ? 'ok' : 'bad');
+}
+
+function renderDashboard(main, run, p) {
+  const sm = p.summary || {};
+  const name = scnName(run);
+  const daily = hasDaily(p);
+  if (!daily) { S.per.mat = 'semanal'; S.per.cons = 'semanal'; }
+  const runDaily = p.granularity === 'diario';
+  let k = kpiHtml('Movimientos', fmt(sm.movimientos), 'Cantidad de transferencias de tonelaje realizadas entre destinos.') +
+    kpiHtml('Brechas Semanales', fmt(sm.brechas), 'Semanas donde una chancadora queda fuera de la banda objetivo ± tolerancia.') +
+    (runDaily ? kpiHtml('Brechas Diarias', fmt(sm.brechas_diarias), 'Días donde una chancadora queda fuera de la banda diaria dentro de su semana.') : '') +
+    statusKpi('Destinos', sm.destinos_ok, null, 'Confirma que el tonelaje total anual por destino se conserva.') +
+    statusKpi('Balance Material', sm.balance_material_ok, sm.balance_material_bad_rows, 'Por fila, SUMA(destinos) debe igualar SUMA(materiales) dentro de ±0.05 %. Si dice Revisar, casi siempre falta marcar algún donante con tonelaje en Columnas detectadas.') +
+    statusKpi('Tabla Materiales', sm.matriz_ok, sm.matriz_violaciones, 'Confirma que ningún destino recibió ni entregó material bloqueado en la tabla Destino × Material.') +
+    (p.chancadoras || []).map(ch => kpiHtml('Obj. ' + esc(ch) + ' t/sem', fmt(p.targets[ch]), 'Promedio semanal objetivo usado para ' + ch + '.')).join('');
+  const dests = p.destinations;
+  const vis = visFor(S.vis, p), cvis = visFor(S.consVis, p);
+  const chips = (set, attr) => dests.map(d => `<label title="Doble clic: ver solo este destino"><input type="checkbox" data-${attr}="${esc(d)}" ${set.has(d) ? 'checked' : ''}><span class="sw" style="background:${colorOf(d, dests)}"></span>${esc(d)}</label>`).join('');
+  const segPer = (key) => daily ? `<span class="seg"><button data-per="${key}:semanal" class="${S.per[key] === 'semanal' ? 'on' : ''}">Semanal</button><button data-per="${key}:diario" class="${S.per[key] === 'diario' ? 'on' : ''}">Diario</button></span>` : '';
+  const perM = S.per.mat, perC = S.per.cons;
+  main.innerHTML = `<section class="kpis">${k}</section>
+  <div class="stack">
+    <div class="panel">
+      <div class="phead"><h2>Material ${perM === 'diario' ? 'Diario' : 'Semanal'} por Destino Seleccionado (t)</h2>${segPer('mat')}<span class="sp"></span>
+        <span class="seg"><button data-mode="individual" class="${S.mode === 'individual' ? 'on' : ''}">Individual</button><button data-mode="total" class="${S.mode === 'total' ? 'on' : ''}">Total</button></span></div>
+      <div class="chips">${chips(vis, 'vis')}</div>
+      <div class="grid-mat"><div class="chart" id="chMat"></div><div class="minis" id="minis"></div></div>
+    </div>
+    <div class="panel">
+      <div class="phead"><h2>Conservación ${perC === 'diario' ? 'Diaria' : 'Semanal'} y Total por Destino Seleccionado</h2>${segPer('cons')}</div>
+      <div class="chips">${chips(cvis, 'cvis')}</div>
+      <div class="grid-cons"><div class="chart" id="chCons"></div><div class="chart" id="chConsTot"></div></div>
+    </div>
+  </div>`;
+  // --- material chart
+  const sel = dests.filter(d => vis.has(d));
+  const rows = periodRows(p, perM, false);
+  const lab = rows.map(r => r[perField(perM)]);
+  const totals = rows.map(r => sumSel(r, sel));
+  const tot = totals.reduce((a, b) => a + b, 0);
+  const unit = perM === 'diario' ? 'Día' : 'Semana';
+  document.getElementById('minis').innerHTML =
+    `<div class="mini"><span>${perM === 'diario' ? 'Total Período' : 'Total 52 Sem'}</span><strong>${fmt(tot)}</strong></div>` +
+    `<div class="mini"><span>Promedio ${unit}</span><strong>${fmt(tot / Math.max(1, totals.length))}</strong></div>` +
+    `<div class="mini"><span>${unit} Máx</span><strong>${fmt(totals.length ? Math.max(...totals) : 0)}</strong></div>` +
+    `<div class="mini"><span>${unit} Mín</span><strong>${fmt(totals.length ? Math.min(...totals) : 0)}</strong></div>`;
+  let series, refs = [];
+  if (S.mode === 'total') series = [{name: 'Total seleccionado', color: cssv('--accent'), values: totals}];
+  else {
+    series = sel.map(d => ({name: d, color: colorOf(d, dests), values: rows.map(r => r[d] || 0)}));
+    sel.filter(d => p.targets[d] !== undefined).forEach(d => {
+      const c = colorOf(d, dests);
+      if (perM === 'semanal') {
+        refs.push({y: p.targets[d] + (p.tolerances[d] || 0), color: c}, {y: p.targets[d] - (p.tolerances[d] || 0), color: c});
+      } else if (runDaily) {
+        const tgt = p.dailyTargetMt != null ? p.dailyTargetMt * 1e6 : p.targets[d] / 7;
+        refs.push({y: tgt + p.dailyToleranceMt * 1e6, color: c, dash: '2 2', opacity: 0.9}, {y: tgt - p.dailyToleranceMt * 1e6, color: c, dash: '2 2', opacity: 0.9});
+      }
+    });
+  }
+  mountChart(document.getElementById('chMat'), Object.assign({kind: 'line', height: 300, labels: lab, series: series, refs: refs,
+    title: `Material ${perM === 'diario' ? 'diario' : 'semanal'} por destino seleccionado (t)`, subtitle: name + ' · ' + p.circuit, catName: unit}, xOpts(perM)));
+  // --- conservation
+  const csel = dests.filter(d => cvis.has(d));
+  const crows = periodRows(p, perC, false), cbase = periodRows(p, perC, true);
+  const clab = crows.map(r => r[perField(perC)]);
+  mountChart(document.getElementById('chCons'), Object.assign({kind: 'line', height: 270, labels: clab,
+    series: [{name: 'Plan', color: cssv('--plan'), values: cbase.map(r => sumSel(r, csel))}, {name: name, color: cssv('--scn'), values: crows.map(r => sumSel(r, csel))}],
+    title: `Conservación ${perC === 'diario' ? 'diaria' : 'semanal'} por destino seleccionado (t)`, subtitle: name + ' · ' + p.circuit + ' · ' + csel.join(', '), catName: perC === 'diario' ? 'Día' : 'Semana'}, xOpts(perC)));
+  const ct = p.conservationTotal.filter(r => csel.includes(r.Destino));
+  mountChart(document.getElementById('chConsTot'), {kind: 'bar', height: 270, hideCats: true,
+    categories: [csel.length === 1 ? csel[0] : 'Destinos seleccionados'],
+    series: [{name: 'Plan', color: cssv('--plan'), values: [ct.reduce((s, r) => s + (r.Base || 0), 0)]}, {name: name, color: cssv('--scn'), values: [ct.reduce((s, r) => s + (r.Modificado || 0), 0)]}],
+    title: 'Conservación total por destino seleccionado (t)', subtitle: name + ' · ' + p.circuit, catName: 'Grupo'});
+}
+
+function cellCls(v, b) { const d = (v || 0) - (b || 0); return Math.abs(d) < 0.5 ? 'same' : d > 0 ? 'pos' : 'neg'; }
+function wideTable(title, rows, baseRows, dests, per, note, compare) {
+  const pf = perField(per);
+  let h = `<div class="panel"><div class="phead"><h2>${esc(title)}</h2></div><div class="tscroll"><table class="dt" data-title="${esc(title)}"><thead><tr><th rowspan="2" class="l">${per === 'diario' ? 'Día' : 'Semana'}</th><th class="c" colspan="${dests.length}">Destino</th><th rowspan="2">Total</th></tr><tr>` +
+    dests.map(d => `<th class="c">${esc(d)}</th>`).join('') + '</tr></thead><tbody>';
+  const tot = {}; let tt = 0;
+  rows.forEach((r, i) => {
+    const b = baseRows ? baseRows[i] : null;
+    const rt = dests.reduce((s, d) => s + (r[d] || 0), 0);
+    const bt = b ? dests.reduce((s, d) => s + (b[d] || 0), 0) : 0;
+    h += `<tr><td class="l">${per === 'diario' ? dmy(r[pf]) : r[pf]}</td>` + dests.map(d => { tot[d] = (tot[d] || 0) + (r[d] || 0); return `<td class="${compare && b ? cellCls(r[d], b[d]) : ''}">${fmt(r[d])}</td>`; }).join('') +
+      `<td class="${compare && b ? cellCls(rt, bt) : ''}">${fmt(rt)}</td></tr>`;
+    tt += rt;
+  });
+  h += `<tr class="tot"><td class="l">Total</td>` + dests.map(d => `<td>${fmt(tot[d])}</td>`).join('') + `<td>${fmt(tt)}</td></tr>`;
+  return h + `</tbody></table></div><div class="note">${esc(note)}</div></div>`;
+}
+function renderTabla(main, run, p) {
+  const daily = hasDaily(p); if (!daily) S.per.tabla = 'semanal';
+  const per = S.per.tabla, name = scnName(run);
+  const seg = daily ? `<span class="seg"><button data-per="tabla:semanal" class="${per === 'semanal' ? 'on' : ''}">Semanal</button><button data-per="tabla:diario" class="${per === 'diario' ? 'on' : ''}">Diario</button></span>` : '';
+  const unit = per === 'diario' ? 'día' : 'semana';
+  main.innerHTML = `<div class="phead"><span class="sub">Vista por período:</span>${seg}<span class="sp"></span><span class="sub">Clic derecho sobre una tabla para copiarla.</span></div>
+    <div class="two">${wideTable('Plan por ' + unit + ' y destino', periodRows(p, per, true), null, p.destinations, per, 'Tonelaje del plan original por ' + unit + '.', false)}
+    ${wideTable(name + ' por ' + unit + ' y destino', periodRows(p, per, false), periodRows(p, per, true), p.destinations, per, 'Verde: recibe más que el Plan · Rojo: recibe menos que el Plan.', true)}</div>`;
+}
+
+function renderMateriales(main, run, p) {
+  const name = scnName(run);
+  const types = p.materialTypes || [];
+  const byType = types.map(t => { const rs = p.wasteDestDetail.filter(r => r.Tipo === t); return [rs.reduce((s, r) => s + (r.Base || 0), 0), rs.reduce((s, r) => s + (r.Modificado || 0), 0)]; });
+  const byDest = p.destinations.map(d => { const rs = p.wasteDestDetail.filter(r => r.Destino === d); return [rs.reduce((s, r) => s + (r.Base || 0), 0), rs.reduce((s, r) => s + (r.Modificado || 0), 0)]; });
+  let rows = '';
+  p.wasteDestDetail.forEach(r => { rows += `<tr><td class="l">${esc(r.Destino)}</td><td class="l">${esc(r.Tipo)}</td><td>${fmt(r.Base)}</td><td>${fmt(r.Modificado)}</td><td class="${cellCls(r.Diferencia, 0)}">${sgn(r.Diferencia)}</td></tr>`; });
+  main.innerHTML = `<div class="two"><div class="stack">
+      <div class="panel"><div class="phead"><h2>${esc(p.circuit)} Total por Tipo de Material (t)</h2></div><div class="chart" id="chType"></div></div>
+      <div class="panel"><div class="phead"><h2>${esc(p.circuit)} Total por Destino (t)</h2></div><div class="chart" id="chDest"></div></div>
+    </div>
+    <div class="panel"><div class="phead"><h2>Detalle de ${esc(p.circuit)} por Destino y Tipo</h2></div>
+      <div class="tscroll" style="max-height:calc(100vh - 190px)"><table class="dt" data-title="Detalle de ${esc(p.circuit)} por destino y tipo"><thead><tr><th class="l">Destino</th><th class="l">Tipo</th><th>Plan</th><th>${esc(name)}</th><th>Diferencia</th></tr></thead><tbody>${rows}</tbody></table></div></div></div>`;
+  const plan = cssv('--plan'), scn = cssv('--scn');
+  mountChart(document.getElementById('chType'), {kind: 'bar', height: 300, categories: types, series: [{name: 'Plan', color: plan, values: byType.map(x => x[0])}, {name: name, color: scn, values: byType.map(x => x[1])}], title: p.circuit + ' total por tipo de material (t)', subtitle: name, catName: 'Tipo'});
+  mountChart(document.getElementById('chDest'), {kind: 'bar', horizontal: true, categories: p.destinations, series: [{name: 'Plan', color: plan, values: byDest.map(x => x[0])}, {name: name, color: scn, values: byDest.map(x => x[1])}], title: p.circuit + ' total por destino (t)', subtitle: name, catName: 'Destino'});
+}
+
+// ------------------------------------------------------------------ compare
+function runLabel(r) { return (r.escenario || 'Sin título') + (r.fecha ? ' · ' + r.fecha : ''); }
+function allRunMeta() {
+  const seen = new Set(), list = [];
+  Object.values(S.runs).forEach(r => { seen.add(r.id); list.push({id: r.id, escenario: r.escenario, fecha: r.fecha, origen: r.origen}); });
+  (S.runList || []).forEach(r => { if (!seen.has(r.id)) { seen.add(r.id); list.push(r); } });
+  return list;
+}
+function ensureRun(id) { if (id && !S.runs[id]) { post({type: 'needRun', id: id}); return false; } return !!id; }
+function renderCompare(main) {
+  const list = allRunMeta();
+  if (!S.B) S.B = S.current;
+  if (!S.A) S.A = (list.find(r => r.id !== S.B) || {}).id || null;
+  const opt = sel => list.map(r => `<option value="${esc(r.id)}" ${sel === r.id ? 'selected' : ''}>${esc(runLabel(r))}${r.origen === 'archivo' ? ' (archivo)' : ''}</option>`).join('');
+  const bar = `<div class="cmpbar">
+    <div class="pick"><span class="tag A">A</span><select data-pick="A"><option value="">— Elegir escenario —</option>${opt(S.A)}</select></div>
+    <button class="btn" data-swap="1" title="Intercambiar A y B">⇄</button>
+    <div class="pick"><span class="tag B">B</span><select data-pick="B"><option value="">— Elegir escenario —</option>${opt(S.B)}</select></div>
+    <button class="btn" data-openres="1" title="Abrir un archivo '... - Resultados.json' de otra corrida">Abrir resultado…</button>
+    <span class="sub">Se listan las corridas de esta sesión y los resultados guardados en la carpeta de salida.</span></div>`;
+  const okA = ensureRun(S.A), okB = ensureRun(S.B);
+  if (!S.A || !S.B) { main.innerHTML = bar + '<div class="panel">Elige dos escenarios para compararlos. Cada vez que calculas, la corrida queda disponible aquí.</div>'; return; }
+  if (!okA || !okB) { main.innerHTML = bar + '<div class="panel">Cargando resultados…</div>'; return; }
+  const ra = S.runs[S.A], rb = S.runs[S.B];
+  const pa = payloadOf(ra, S.circuit), pb = payloadOf(rb, S.circuit);
+  if (!pa || !pb) { main.innerHTML = bar + `<div class="panel">${!pa ? esc(scnName(ra)) : esc(scnName(rb))} no tiene circuito ${esc(S.circuit)}.</div>`; return; }
+  let nA = scnName(ra), nB = scnName(rb);
+  if (nA === nB) { nA += ' (' + (ra.fecha || 'A') + ')'; nB += ' (' + (rb.fecha || 'B') + ')'; }
+  // Same plan = same Excel file name + same active year (the folder may differ between PCs).
+  const baseName = r => String(r.archivo_base || '').split(/[\\/]/).pop().toLowerCase();
+  const samePlan = baseName(ra) === baseName(rb) && String(ra.anio_activo) === String(rb.anio_activo);
+  const daily = hasDaily(pa) && hasDaily(pb); if (!daily) S.per.cmp = 'semanal';
+  const per = S.per.cmp;
+  const chs = Array.from(new Set([].concat(pa.chancadoras || [], pb.chancadoras || [])));
+  const sa = pa.summary || {}, sb = pb.summary || {};
+  const sumCh = (p, base) => periodRows(p, 'semanal', base).reduce((s, r) => s + sumSel(r, chs), 0);
+  const stA = pa.settings || {}, stB = pb.settings || {};
+  const num = (lab, a, b, f) => { f = f || fmt; const d = (b || 0) - (a || 0); return `<tr><td class="l">${lab}</td><td>${f(a)}</td><td>${f(b)}</td><td class="${Math.abs(d) < 1e-9 ? 'same' : 'dif'}">${Math.abs(d) < 1e-9 ? '0' : (d > 0 ? '+' : '') + f(d)}</td></tr>`; };
+  const okr = (lab, a, b, na, nb) => `<tr><td class="l">${lab}</td><td class="${a ? 'ok' : 'bad'}">${a ? '✓ Ok' : '! Revisar' + (na ? ' (' + na + ')' : '')}</td><td class="${b ? 'ok' : 'bad'}">${b ? '✓ Ok' : '! Revisar' + (nb ? ' (' + nb + ')' : '')}</td><td class="same">—</td></tr>`;
+  const txt = (lab, a, b) => `<tr><td class="l">${lab}</td><td>${esc(a)}</td><td>${esc(b)}</td><td class="same">${a === b ? 'Igual' : 'Distinto'}</td></tr>`;
+  let kt = num('Movimientos', sa.movimientos, sb.movimientos) + num('Brechas semanales', sa.brechas, sb.brechas) + num('Brechas diarias', sa.brechas_diarias, sb.brechas_diarias) +
+    okr('Destinos', sa.destinos_ok, sb.destinos_ok) + okr('Balance material', sa.balance_material_ok, sb.balance_material_ok, sa.balance_material_bad_rows, sb.balance_material_bad_rows) +
+    okr('Tabla materiales', sa.matriz_ok, sb.matriz_ok, sa.matriz_violaciones, sb.matriz_violaciones) +
+    chs.map(ch => num('Obj. ' + esc(ch) + ' t/sem', pa.targets[ch], pb.targets[ch])).join('') +
+    num('Total chancadoras 52 sem (t)', sumCh(pa, false), sumCh(pb, false)) +
+    txt('Modo', MODE[stA.modo] || stA.modo || '—', MODE[stB.modo] || stB.modo || '—') + txt('Granularidad', GRAN[stA.granularidad] || '—', GRAN[stB.granularidad] || '—') +
+    num('Objetivo Mt/sem', stA.objetivo_mt, stB.objetivo_mt, fmt2) + num('Tolerancia Mt/sem', stA.tolerancia_mt, stB.tolerancia_mt, fmt2) +
+    txt('Archivo base', (ra.archivo_base || '').split(/[\\/]/).pop(), (rb.archivo_base || '').split(/[\\/]/).pop());
+  const seg = daily ? `<span class="seg"><button data-per="cmp:semanal" class="${per === 'semanal' ? 'on' : ''}">Semanal</button><button data-per="cmp:diario" class="${per === 'diario' ? 'on' : ''}">Diario</button></span>` : '';
+  main.innerHTML = bar + `<div class="grid-cons" style="grid-template-columns:minmax(0,1fr) minmax(330px,36%)">
+    <div class="panel"><div class="phead"><h2>Material ${per === 'diario' ? 'Diario' : 'Semanal'} en Chancadoras · A vs B (t)</h2>${seg}<span class="sp"></span>
+      <span class="seg"><button data-cmode="total" class="${S.cmpMode === 'total' ? 'on' : ''}">Total</button><button data-cmode="individual" class="${S.cmpMode === 'individual' ? 'on' : ''}">Individual</button></span></div>
+      <div class="chart" id="cmpLine"></div><div class="note">${S.cmpMode === 'individual' ? 'Línea continua: ' + esc(nA) + ' · Línea punteada: ' + esc(nB) : ''}${samePlan ? '' : ' Los escenarios usan archivos base o años distintos: el Plan no se muestra.'}</div></div>
+    <div class="panel"><div class="phead"><h2>Indicadores</h2></div><div class="tscroll" style="max-height:none"><table class="dt" data-title="Comparación de indicadores"><thead><tr><th class="l">Indicador</th><th><span class="tag A">A</span> ${esc(nA)}</th><th><span class="tag B">B</span> ${esc(nB)}</th><th>B − A</th></tr></thead><tbody>${kt}</tbody></table></div></div>
+  </div>
+  <div class="two" style="margin-top:12px">
+    <div class="panel"><div class="phead"><h2>Total por Destino · A vs B (t)</h2></div><div class="chart" id="cmpDest"></div></div>
+    <div class="panel"><div class="phead"><h2>Total por Tipo de Material · A vs B (t)</h2></div><div class="chart" id="cmpType"></div></div>
+  </div>
+  <div class="panel" style="margin-top:12px"><div class="phead"><h2>Detalle por ${per === 'diario' ? 'Día' : 'Semana'} · Chancadoras</h2></div><div id="cmpTable"></div></div>`;
+  // line chart
+  const rA = periodRows(pa, per, false), rB = periodRows(pb, per, false), rP = periodRows(pa, per, true);
+  const pf = perField(per);
+  const idxB = new Map(rB.map(r => [r[pf], r]));
+  const lab = rA.map(r => r[pf]);
+  const colA = cssv('--a'), colB = cssv('--b');
+  let series;
+  if (S.cmpMode === 'total') {
+    series = [];
+    if (samePlan) series.push({name: 'Plan', color: cssv('--plan'), values: rP.map(r => sumSel(r, chs))});
+    series.push({name: nA, color: colA, values: rA.map(r => sumSel(r, chs))}, {name: nB, color: colB, values: lab.map(l => idxB.has(l) ? sumSel(idxB.get(l), chs) : null)});
+  } else {
+    series = [];
+    chs.forEach(ch => {
+      series.push({name: ch + ' · ' + nA, color: colorOf(ch, pa.destinations), values: rA.map(r => r[ch] || 0)});
+      series.push({name: ch + ' · ' + nB, color: colorOf(ch, pa.destinations), dash: true, values: lab.map(l => idxB.has(l) ? (idxB.get(l)[ch] || 0) : null)});
+    });
+  }
+  mountChart(document.getElementById('cmpLine'), Object.assign({kind: 'line', height: 320, labels: lab, series: series,
+    title: `Material ${per === 'diario' ? 'diario' : 'semanal'} en chancadoras: ${nA} vs ${nB} (t)`, subtitle: S.circuit, catName: per === 'diario' ? 'Día' : 'Semana'}, xOpts(per)));
+  // bars by destination / type
+  const dests = Array.from(new Set([].concat(pa.destinations, pb.destinations)));
+  const totBy = (p, key, val, field) => { const m = {}; (p.wasteDestDetail || []).forEach(r => { m[r[key]] = (m[r[key]] || 0) + (r[field] || 0); }); return val.map(v => m[v] || 0); };
+  const dser = []; if (samePlan) dser.push({name: 'Plan', color: cssv('--plan'), values: totBy(pa, 'Destino', dests, 'Base')});
+  dser.push({name: nA, color: colA, values: totBy(pa, 'Destino', dests, 'Modificado')}, {name: nB, color: colB, values: totBy(pb, 'Destino', dests, 'Modificado')});
+  mountChart(document.getElementById('cmpDest'), {kind: 'bar', horizontal: true, categories: dests, series: dser, title: `Total por destino: ${nA} vs ${nB} (t)`, subtitle: S.circuit, catName: 'Destino'});
+  const types = Array.from(new Set([].concat(pa.materialTypes || [], pb.materialTypes || [])));
+  const tser = []; if (samePlan) tser.push({name: 'Plan', color: cssv('--plan'), values: totBy(pa, 'Tipo', types, 'Base')});
+  tser.push({name: nA, color: colA, values: totBy(pa, 'Tipo', types, 'Modificado')}, {name: nB, color: colB, values: totBy(pb, 'Tipo', types, 'Modificado')});
+  mountChart(document.getElementById('cmpType'), {kind: 'bar', categories: types, series: tser, height: 300, title: `Total por tipo de material: ${nA} vs ${nB} (t)`, subtitle: S.circuit, catName: 'Tipo'});
+  // detail table
+  let tb = `<div class="tscroll" style="max-height:420px"><table class="dt" data-title="Detalle por período: ${esc(nA)} vs ${esc(nB)}"><thead><tr><th class="l">${per === 'diario' ? 'Día' : 'Semana'}</th>${samePlan ? '<th>Plan</th>' : ''}<th>${esc(nA)}</th><th>${esc(nB)}</th><th>B − A</th></tr></thead><tbody>`;
+  let tA = 0, tB = 0, tP = 0;
+  rA.forEach((r, i) => {
+    const a = sumSel(r, chs), b = idxB.has(r[pf]) ? sumSel(idxB.get(r[pf]), chs) : 0, pl = sumSel(rP[i] || {}, chs);
+    tA += a; tB += b; tP += pl;
+    tb += `<tr><td class="l">${per === 'diario' ? dmy(r[pf]) : r[pf]}</td>${samePlan ? `<td>${fmt(pl)}</td>` : ''}<td>${fmt(a)}</td><td>${fmt(b)}</td><td class="${cellCls(b, a)}">${sgn(b - a)}</td></tr>`;
+  });
+  tb += `<tr class="tot"><td class="l">Total</td>${samePlan ? `<td>${fmt(tP)}</td>` : ''}<td>${fmt(tA)}</td><td>${fmt(tB)}</td><td>${sgn(tB - tA)}</td></tr></tbody></table></div>`;
+  document.getElementById('cmpTable').innerHTML = tb;
+}
+
+// ------------------------------------------------------------------ interactions in main
+const mainEl = document.getElementById('main');
+mainEl.addEventListener('change', e => {
+  const t = e.target;
+  const run = curRun(); const p = run ? payloadOf(run, S.circuit) : null;
+  if (t.dataset.vis != null || t.dataset.cvis != null) {
+    const store = t.dataset.vis != null ? S.vis : S.consVis;
+    const set = visFor(store, p); const d = t.dataset.vis != null ? t.dataset.vis : t.dataset.cvis;
+    if (t.checked) set.add(d); else { set.delete(d); if (!set.size) set.add(d); }
+    renderMain();
+  } else if (t.dataset.pick) {
+    S[t.dataset.pick] = t.value || null; renderMain();
+  }
+});
+mainEl.addEventListener('dblclick', e => {
+  const lab = e.target.closest('.chips label'); if (!lab) return;
+  const inp = lab.querySelector('input'); const run = curRun(); const p = payloadOf(run, S.circuit);
+  const store = inp.dataset.vis != null ? S.vis : S.consVis; const d = inp.dataset.vis != null ? inp.dataset.vis : inp.dataset.cvis;
+  store[S.current + '|' + p.circuit] = new Set([d]); e.preventDefault(); renderMain();
+});
+mainEl.addEventListener('click', e => {
+  const t = e.target.closest('[data-per],[data-mode],[data-cmode],[data-swap],[data-openres]');
+  if (!t) return;
+  if (t.dataset.per) { const q = t.dataset.per.split(':'); S.per[q[0]] = q[1]; renderMain(); }
+  else if (t.dataset.mode) { S.mode = t.dataset.mode; renderMain(); }
+  else if (t.dataset.cmode) { S.cmpMode = t.dataset.cmode; renderMain(); }
+  else if (t.dataset.swap) { const x = S.A; S.A = S.B; S.B = x; renderMain(); }
+  else if (t.dataset.openres) post({type: 'openResultFile'});
+});
+
+// ------------------------------------------------------------------ context menu & export
+const cm = document.getElementById('cm');
+let cmTarget = null;
+document.addEventListener('contextmenu', e => {
+  const chart = e.target.closest('.chart[data-chart]');
+  const table = e.target.closest('table.dt');
+  e.preventDefault();
+  if (!chart && !table) { cm.style.display = 'none'; return; }
+  document.querySelectorAll('.tip').forEach(t => { t.style.display = 'none'; });
+  cmTarget = chart || table;
+  const items = chart ? [
+    ['data', 'Copiar datos del gráfico'], ['img', 'Copiar como imagen'], ['saveimg', 'Guardar como imagen…'],
+    HOST ? ['-'] : null, HOST ? ['ppt', 'Copiar como gráfico de PowerPoint', 'editable'] : null, HOST ? ['pptsave', 'Exportar a PowerPoint (.pptx)…'] : null,
+    HOST ? ['pptall', 'Exportar todos los gráficos a PowerPoint…'] : null
+  ] : [['tsv', 'Copiar tabla'], ['html', 'Copiar con formato', 'Excel / Word / PPT'], ['timg', 'Copiar como imagen', 'parte visible']];
+  cm.innerHTML = items.filter(Boolean).map(it => it[0] === '-' ? '<hr>' : `<div data-cm="${it[0]}"><span>${it[1]}</span>${it[2] ? '<small>' + it[2] + '</small>' : ''}</div>`).join('');
+  cm.style.display = 'block';
+  const w = cm.offsetWidth, h = cm.offsetHeight;
+  cm.style.left = Math.min(e.clientX, innerWidth - w - 6) + 'px';
+  cm.style.top = Math.min(e.clientY, innerHeight - h - 6) + 'px';
+});
+document.addEventListener('click', e => { if (!e.target.closest('#cm')) cm.style.display = 'none'; });
+document.addEventListener('scroll', () => { cm.style.display = 'none'; }, true);
+cm.addEventListener('click', async e => {
+  const it = e.target.closest('[data-cm]'); if (!it) return;
+  cm.style.display = 'none';
+  const op = it.dataset.cm, el = cmTarget;
+  try {
+    if (op === 'data') { const t = chartTable(el._spec); copyRich(t.tsv, t.html, 'Datos del gráfico copiados'); }
+    else if (op === 'img') { const png = await chartPng(el); copyImage(png, 'Gráfico copiado como imagen'); }
+    else if (op === 'saveimg') { const png = await chartPng(el); saveImage(png, el._spec.title); }
+    else if (op === 'ppt' || op === 'pptsave') post({type: 'pptChart', save: op === 'pptsave', spec: {charts: [pptSpec(el._spec)]}, name: el._spec.title});
+    else if (op === 'pptall') { const specs = Array.from(document.querySelectorAll('.chart[data-chart]')).map(c => pptSpec(c._spec)); post({type: 'pptChart', save: true, spec: {charts: specs}, name: 'Material Shift - ' + S.circuit}); }
+    else if (op === 'tsv' || op === 'html') { const t = tableExport(el); copyRich(t.tsv, op === 'html' ? t.html : null, 'Tabla copiada'); }
+    else if (op === 'timg') {
+      const box = el.closest('.tscroll') || el; const r = box.getBoundingClientRect();
+      const x = Math.max(0, r.left), y = Math.max(0, r.top), w = Math.min(innerWidth, r.right) - x, h = Math.min(innerHeight, r.bottom) - y;
+      if (HOST) post({type: 'captureRect', rect: {x: x, y: y, w: w, h: h, dpr: devicePixelRatio}, name: el.dataset.title || 'Tabla'});
+    }
+  } catch (err) { toast('No se pudo completar: ' + err.message); }
+});
+function chartTable(spec) {
+  const cats = spec.kind === 'line' ? spec.labels.map(l => spec.tipLabel ? spec.tipLabel(l).replace(/^Semana /, '') : l) : spec.categories;
+  const head = [spec.catName || ''].concat(spec.series.map(s => s.name));
+  const rows = cats.map((c, i) => [c].concat(spec.series.map(s => s.values[i] == null ? '' : Math.round(s.values[i]))));
+  const tsv = [head.join('\t')].concat(rows.map(r => r.join('\t'))).join('\r\n');
+  const st = 'font-family:Segoe UI,Arial;font-size:9pt;border:1px solid #D6DCE2;padding:3px 8px;';
+  const html = `<table style="border-collapse:collapse"><tr>${head.map(h => `<th style="${st}background:#F1F3F6;font-weight:600">${esc(h)}</th>`).join('')}</tr>` +
+    rows.map(r => '<tr>' + r.map((v, j) => `<td style="${st}text-align:${j ? 'right' : 'left'}">${j && v !== '' ? fmt(v) : esc(v)}</td>`).join('') + '</tr>').join('') + '</table>';
+  return {tsv: tsv, html: html};
+}
+function pptSpec(spec) {
+  const kind = spec.kind === 'line' ? 'line' : (spec.horizontal ? 'bar' : 'column');
+  const cats = spec.kind === 'line' ? spec.labels.map(l => spec.xFmt ? String(spec.tipLabel ? spec.tipLabel(l) : l).replace(/^Semana /, '') : l) : spec.categories;
+  return {title: spec.title, subtitle: spec.subtitle || '', kind: kind, categories: cats,
+    series: spec.series.map(s => ({name: s.name, color: s.color, dash: !!s.dash, values: s.values.map(v => v == null ? null : Math.round(v))}))};
+}
+function tableExport(table) {
+  const rows = Array.from(table.querySelectorAll('tr'));
+  const tsv = rows.map(tr => Array.from(tr.children).map(td => { const t = td.textContent.trim(); const cs = Number(td.getAttribute('colspan') || 1); return t + '\t'.repeat(cs - 1); }).join('\t')).join('\r\n');
+  const st = 'font-family:Segoe UI,Arial;font-size:9pt;border:1px solid #D6DCE2;padding:3px 8px;white-space:nowrap;';
+  const html = '<table style="border-collapse:collapse">' + rows.map(tr => '<tr>' + Array.from(tr.children).map(td => {
+    const cs = getComputedStyle(td); const th = td.tagName === 'TH';
+    const bg = th ? '#F1F3F6' : td.classList.contains('pos') ? '#E8F6ED' : td.classList.contains('neg') ? '#FDECEB' : tr.classList.contains('tot') ? '#F5F7FA' : '#FFFFFF';
+    const fg = td.classList.contains('pos') ? '#146C2E' : td.classList.contains('neg') ? '#A4261D' : td.classList.contains('ok') ? '#1D7A3E' : td.classList.contains('bad') ? '#B3261E' : '#142033';
+    const span = (td.getAttribute('colspan') ? ` colspan="${td.getAttribute('colspan')}"` : '') + (td.getAttribute('rowspan') ? ` rowspan="${td.getAttribute('rowspan')}"` : '');
+    return `<${th ? 'th' : 'td'}${span} style="${st}background:${bg};color:${fg};text-align:${cs.textAlign};font-weight:${th || tr.classList.contains('tot') ? 600 : 400}">${esc(td.textContent.trim())}</${th ? 'th' : 'td'}>`;
+  }).join('') + '</tr>').join('') + '</table>';
+  return {tsv: tsv, html: html};
+}
+function chartPng(el, scale) {
+  scale = scale || 2;
+  const spec = el._spec; const svg = el.querySelector('svg');
+  const W = Number(svg.getAttribute('width')), H = Number(svg.getAttribute('height'));
+  const clone = svg.cloneNode(true);
+  clone.querySelectorAll('[visibility="hidden"]').forEach(n => n.remove());
+  const xml = new XMLSerializer().serializeToString(clone);
+  const img = new Image();
+  return new Promise((res, rej) => {
+    img.onload = () => {
+      const titleH = 46;
+      const c = document.createElement('canvas'); c.width = (W + 32) * scale; c.height = (H + titleH + 16) * scale;
+      const g = c.getContext('2d'); g.scale(scale, scale);
+      g.fillStyle = cssv('--panel'); g.fillRect(0, 0, W + 32, H + titleH + 16);
+      g.fillStyle = cssv('--ink'); g.font = '700 15px "Segoe UI"'; g.fillText(spec.title || '', 16, 24);
+      g.fillStyle = cssv('--muted'); g.font = '12px "Segoe UI"'; g.fillText(spec.subtitle || '', 16, 41);
+      g.drawImage(img, 16, titleH, W, H);
+      res(c.toDataURL('image/png'));
+    };
+    img.onerror = () => rej(new Error('imagen'));
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+  });
+}
+function copyRich(tsv, html, msg) {
+  if (HOST) { post({type: 'copy', text: tsv, html: html || null}); toast(msg); return; }
+  if (html && window.ClipboardItem) navigator.clipboard.write([new ClipboardItem({'text/plain': new Blob([tsv], {type: 'text/plain'}), 'text/html': new Blob([html], {type: 'text/html'})})]).then(() => toast(msg));
+  else navigator.clipboard.writeText(tsv).then(() => toast(msg));
+}
+function copyImage(png, msg) {
+  if (HOST) { post({type: 'copyImage', png: png}); toast(msg); return; }
+  fetch(png).then(r => r.blob()).then(b => navigator.clipboard.write([new ClipboardItem({'image/png': b})])).then(() => toast(msg));
+}
+function saveImage(png, name) {
+  if (HOST) { post({type: 'saveImage', png: png, name: name}); return; }
+  const a = document.createElement('a'); a.href = png; a.download = (name || 'grafico') + '.png'; a.click();
+}
+let toastT = null;
+function toast(text) { const t = document.getElementById('toast'); t.textContent = text; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2200); }
+
+// ------------------------------------------------------------------ keys -> host (shortcuts work wherever the focus is)
+document.addEventListener('keydown', e => {
+  const k = e.key;
+  if (k === 'Escape') { cm.style.display = 'none'; return; }
+  if ((e.altKey || e.getModifierState('AltGraph')) && k === 'F4') { e.preventDefault(); post({type: 'close'}); return; }   // the page would swallow it
+  if (e.ctrlKey && k === 'Tab') { e.preventDefault(); const run = curRun(); const have = run ? Object.keys(run.circuitos || {}) : []; const nx = S.circuit === 'Desmonte' ? 'Mineral' : 'Desmonte'; if (S.view === 'comparar' || have.includes(nx)) { S.circuit = nx; post({type: 'circuit', circuit: nx}); render(); } return; }
+  if (k === 'F5' || k === 'F1' || (e.ctrlKey && /^[a-z]$/i.test(k) && 'nosemzp'.includes(k.toLowerCase()))) {
+    if (e.ctrlKey && k.toLowerCase() === 'c') return;
+    e.preventDefault();
+    post({type: 'key', key: k, ctrl: e.ctrlKey, shift: e.shiftKey, alt: e.altKey});
+  }
+});
+
+// ------------------------------------------------------------------ start
+if (EMBED) {
+  EMBED.id = 'embed'; EMBED.origen = 'archivo';
+  S.runs.embed = EMBED; S.current = 'embed';
+  S.circuit = Object.keys(EMBED.circuitos || {})[0] || 'Desmonte';
+  if (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) setTheme(true);
+}
+render();
+post({type: 'dashReady'});
+</script>
+</body>
+</html>

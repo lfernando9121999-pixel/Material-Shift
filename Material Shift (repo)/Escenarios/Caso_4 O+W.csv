@@ -1,0 +1,131 @@
+﻿sep=;
+Escenario Ajuste Plan;version 2
+Puedes editar los valores en Excel. No cambies los nombres de las secciones entre corchetes.
+
+[General]
+Archivo base;C:\Users\Luis Fernando\Desktop\Material Shift\Inputs\Ajuste Plan 2042.xlsx
+Archivo de salida;C:\Users\Luis Fernando\Desktop\Material Shift\Outputs\Caso_4 O+W.xlsx
+Hoja;Plan_Base
+Año activo;2042
+
+[Objetivos]
+Modo;Balanceado
+Objetivo Mt/sem;1.35
+Tolerancia;0.03
+Objetivo Mt/sem Mineral;1.03
+Tolerancia Mineral;0.00
+Unidad de tolerancia;Mt
+Granularidad;Semanal
+Objetivo Mt/día;0.170
+Tolerancia diaria Mt;0.020
+
+[Donantes 1]
+Chancadora;Chw2a_1
+Orden;Columna;Usar
+1;N3_7;Si
+2;DiqueN_2;Si
+3;E10_5;Si
+4;Inpit_F12;Si
+5;Inpit_F13;Si
+6;E10_6;Si
+
+[Donantes 2]
+Chancadora;Chw2a_2
+Orden;Columna;Usar
+1;N3_7;Si
+2;Inpit_F12;Si
+3;Inpit_F13;Si
+4;DiqueN_2;Si
+5;E10_6;Si
+6;E10_5;Si
+
+[Fases 1]
+Chancadora;Chw2a_1
+Orden;Columna;Usar
+1;PHASE 15;Si
+2;PHASE 14;Si
+3;PHASE 13;Si
+4;REHANDLE;No
+
+[Fases 2]
+Chancadora;Chw2a_2
+Orden;Columna;Usar
+1;PHASE 15;Si
+2;PHASE 14;Si
+3;PHASE 13;Si
+4;REHANDLE;No
+
+[Donantes Mineral]
+Chancadora;Ore1
+Orden;Columna;Usar
+1;Stk3_Ore1;Si
+
+[Fases Mineral]
+Chancadora;Ore1
+Orden;Columna;Usar
+1;REHANDLE;No
+2;PHASE 14;Si
+3;PHASE 13;Si
+4;PHASE 15;Si
+
+[Config Destinos]
+Nota;Receptor/Donante/N.A. y Mineral/Desmonte/N.A. por destino (hoja Config del Excel o editado en la app)
+Destino;Config_Destinos;Config_Materiales
+Ore1;Receptor;Mineral
+Chw2a_1;Receptor;Desmonte
+Chw2a_2;Receptor;Desmonte
+Stk3_Ore1;Donante;Mineral
+yan_bl_v;N/A;N/A
+Área Stock 3;N/A;N/A
+Área Stock 4;N/A;N/A
+Área Stock 5;N/A;N/A
+Área Stock 6;N/A;N/A
+Área Stock 7;N/A;N/A
+Área Stock 8;N/A;N/A
+Área Stock 9;N/A;N/A
+Área Stock 10;N/A;N/A
+Área Stock 11;N/A;N/A
+Área Stock 12;N/A;N/A
+Área Stock 13;N/A;N/A
+Área Stock 14;N/A;N/A
+Área Stock 15;N/A;N/A
+DiqueN_2;Donante;Desmonte
+E10_5;Donante;Desmonte
+E10_6;Donante;Desmonte
+Inpit_F12;Donante;Desmonte
+Inpit_F13;Donante;Desmonte
+N3_7;Donante;Desmonte
+Botadero 9;N/A;N/A
+Botadero 10;N/A;N/A
+Botadero 11;N/A;N/A
+Botadero 12;N/A;N/A
+Botadero 13;N/A;N/A
+Botadero 14;N/A;N/A
+Botadero 15;N/A;N/A
+Botadero 16;N/A;N/A
+Botadero 17;N/A;N/A
+Botadero 18;N/A;N/A
+Botadero 19;N/A;N/A
+Botadero 20;N/A;N/A
+Botadero 21;N/A;N/A
+Botadero 22;N/A;N/A
+Botadero 23;N/A;N/A
+Botadero 24;N/A;N/A
+Botadero 25;N/A;N/A
+Botadero 26;N/A;N/A
+Botadero 27;N/A;N/A
+Botadero 28;N/A;N/A
+Botadero 29;N/A;N/A
+Botadero 30;N/A;N/A
+
+[Materiales]
+Nota;"1 = ese destino puede recibir y entregar ese material; 0 = ese material no se toca en ese destino"
+Destino;Wa;Wb;Wc;Wh;Wrip
+Chw2a_1;1;1;1;1;1
+Chw2a_2;1;1;1;1;1
+N3_7;0;1;1;1;0
+DiqueN_2;1;1;1;1;1
+E10_5;1;1;1;1;1
+Inpit_F12;1;1;1;1;1
+Inpit_F13;1;1;1;1;1
+E10_6;1;1;1;1;1
