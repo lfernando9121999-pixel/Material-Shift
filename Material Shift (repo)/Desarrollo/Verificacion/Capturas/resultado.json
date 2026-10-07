@@ -1,0 +1,137 @@
+[
+ [
+  "Abrir Caso_1 desde «Abrir existente» (con detección)",
+  true,
+  "0.22 s"
+ ],
+ [
+  "Caso_1: circuitos Desmonte + Mineral detectados",
+  true,
+  "{\"m\": true, \"ch\": [\"Chw2a_1\", \"Chw2a_2\"], \"mch\": [\"Ore1\"], \"y\": 2042, \"modeD\": \"balanceado\", \"modeM\": \"balanceado\"}"
+ ],
+ [
+  "Calcular Caso_1",
+  true,
+  "1.67 s · Listo en 1.6 s · Desmonte: 3393 movimientos · Mineral: 239 movimientos. Ctrl+E para el Excel."
+ ],
+ [
+  "KPI Destinos/Balance/Tabla muestran Ok en verde",
+  true,
+  "{\"Movimientos\": [\"panel kpi \", \"3,393\"], \"Brechas Semanales\": [\"panel kpi \", \"40\"], \"Destinos\": [\"panel kpi ok\", \"✓ Ok\"], \"Balance Material\": [\"panel kpi ok\", \"✓ Ok\"], \"Tabla Materiales\": [\"panel kpi ok\", \"✓ Ok\"], \"Obj. Chw2a_1 t/sem\": [\"panel kpi \", \"1,350,000\"], \"Obj. Chw2a_2 t/sem\": [\"panel kpi \", \"1,350,000\"]}"
+ ],
+ [
+  "Leyenda: «Plan» y nombre del escenario (no Base/Modificado)",
+  true,
+  "['Plan', 'Caso_1 O+W']"
+ ],
+ [
+  "Gráfico de material en Diario (título actualizado)",
+  true,
+  "13 ms"
+ ],
+ [
+  "Gráfico de material en Semanal (título actualizado)",
+  true,
+  "17 ms"
+ ],
+ [
+  "Vista tabla",
+  true,
+  "54 ms"
+ ],
+ [
+  "Vista materiales",
+  true,
+  "18 ms"
+ ],
+ [
+  "Vista dashboard",
+  true,
+  "9 ms"
+ ],
+ [
+  "Subpestaña Mineral en el dashboard",
+  true,
+  "10 ms"
+ ],
+ [
+  "La barra lateral sigue al circuito elegido en el dashboard",
+  true,
+  ""
+ ],
+ [
+  "Mineral Caso_1: Balance material en rojo claro (falta yan_bl_v como donante, ver v19)",
+  true,
+  "panel kpi bad"
+ ],
+ [
+  "Modo por circuito: cambiar Mineral no cambia Desmonte",
+  true,
+  "['balanceado', 'objetivo_fijo']"
+ ],
+ [
+  "Aviso en el dashboard: resultados desactualizados tras cambiar criterios",
+  true,
+  "⚠La configuración cambió después de este cálculo. Presiona F5 para recalcular."
+ ],
+ [
+  "Prioridad: Alt+↑ sube la fila seleccionada",
+  true,
+  "['N3_7', 'DiqueN_2', 'E10_5', 'Inpit_F12', 'Inpit_F13', 'E10_6'] -> ['DiqueN_2', 'N3_7', 'E10_5', 'Inpit_F12', 'Inpit_F13', 'E10_6']"
+ ],
+ [
+  "Al abrir otro escenario con cambios sin guardar, pregunta antes de descartar",
+  true,
+  ""
+ ],
+ [
+  "Calcular Caso_4",
+  true,
+  "1.62 s"
+ ],
+ [
+  "Comparar escenarios: A vs B dibujado",
+  true,
+  "54 ms"
+ ],
+ [
+  "Comparación: nombres de los escenarios en la leyenda",
+  true,
+  "['Caso_1 O+W', 'Caso_4 O+W']"
+ ],
+ [
+  "Intercambiar A ⇄ B",
+  true,
+  ""
+ ],
+ [
+  "Menú contextual del gráfico (datos, imagen, PowerPoint)",
+  true,
+  "Copiar datos del gráfico | Copiar como imagen | Guardar como imagen… | Copiar como gráfico de PowerPointeditable | Exportar a PowerPoint (.pptx)… | Exportar todos los gráficos a PowerPoint…"
+ ],
+ [
+  "Copiar datos del gráfico → portapapeles",
+  true,
+  "Copiado al portapapeles con formato."
+ ],
+ [
+  "Barra lateral: pestaña inputs",
+  true,
+  "4 ms"
+ ],
+ [
+  "Barra lateral: pestaña objetivos",
+  true,
+  "10 ms"
+ ],
+ [
+  "Barra lateral: pestaña prioridad",
+  true,
+  "16 ms"
+ ],
+ [
+  "Barra lateral: pestaña material",
+  true,
+  "18 ms"
+ ]
+]
